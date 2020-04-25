@@ -26,17 +26,17 @@ StudentWorld::~StudentWorld()
 
 int StudentWorld::init()    
 {
-	m_numDeadNeededForLevel = getLevel() * 10 + getLevel();  //number of bacteria is getLevel()*10 and number of pits is getLevel()
+	m_numDeadNeededForLevel = getLevel() * 10 + getLevel(); 
 	m_numDeadForLevel = 0;
-	m_socrates = new Socrates(0, VIEW_HEIGHT / 2, this);   //insert socrates
+	m_socrates = new Socrates(0, VIEW_HEIGHT / 2, this);   
 
 	int numPits = getLevel();
 	insertInCircle(numPits, 'p');
 
-	int numFood = min(5 * getLevel(), 25); //get number of food to insert
+	int numFood = min(5 * getLevel(), 25); 
 	insertInCircle(numFood, 'f');
 
-	int numDirt = max(180 - 20 * getLevel(), 20);  //get number of dirt to insert
+	int numDirt = max(180 - 20 * getLevel(), 20);  
 	insertInCircle(numDirt, 'd');
 
     return GWSTATUS_CONTINUE_GAME;
@@ -47,22 +47,22 @@ int StudentWorld::move()
 	//each alive actor does something
 	for (list<Actor*>::iterator it = m_actors.begin(); it != m_actors.end(); it++)
 	{
-		if ((*it)->isAlive())  //have each alive actor do something
+		if ((*it)->isAlive())  
 			(*it)->doSomething();
 
-		if (!m_socrates->isAlive())   //check if socrates died after each actors movement
+		if (!m_socrates->isAlive())   
 		{
 			decLives();
 			return GWSTATUS_PLAYER_DIED;
 		}
 
-		if (m_numDeadForLevel == m_numDeadNeededForLevel)   //check if socrates completed level
+		if (m_numDeadForLevel == m_numDeadNeededForLevel)   
 		{
 			playSound(SOUND_FINISHED_LEVEL);
 			return GWSTATUS_FINISHED_LEVEL;
 		}
 	}
-	m_socrates->doSomething();      //socrates does something
+	m_socrates->doSomething();      
 
 	//remove dead actors
 	for (list<Actor*>::iterator it = m_actors.begin(); it != m_actors.end(); )
@@ -157,7 +157,7 @@ bool StudentWorld::checkWeaponOverlap(const double& x, const double& y, const in
 				(*it)->setDead();
 				return true;
 			}
-			else if ((*it)->eatsFood())  //if bacteria, decrease hit points by amountDamage
+			else if ((*it)->eatsFood())  //bacteria
 			{
 				static_cast<Bacteria*>(*it)->adjustHitPoints(0 - amountDamage);
 				return true;
@@ -173,7 +173,7 @@ bool StudentWorld::checkFoodOverlap(const double& x, const double& y, const int&
 	{
 		if (checkOverlap((*it), x, y, radius))
 		{
-			if ((*it)->canBeEaten())  //if pizza
+			if ((*it)->canBeEaten())  //pizza
 			{
 				(*it)->setDead();
 				return true;
@@ -189,7 +189,7 @@ bool StudentWorld::checkDirtMovementOverlap(const double& x, const double& y)
 	{
 		if (checkOverlap((*it), x, y, SPRITE_WIDTH / 2))
 		{
-			if ((*it)->canBlockMovement())  //if lifetime actor or dirt, set dead.  
+			if ((*it)->canBlockMovement())  
 				return true;
 		}
 	}
@@ -198,11 +198,11 @@ bool StudentWorld::checkDirtMovementOverlap(const double& x, const double& y)
 
 void StudentWorld::getRandomLocation(double& randX, double& randY) const   //generates a random location within a radius of 120 pixels from center
 {
-	randX = randInt(-120, 120);  //generate random x value between -120 & 120 then add to center x coordinate
-	int y = ((int)sqrt(120.0 * 120.0 - randX * randX));   //generate random y coordinate in a range depending on the generated x coordinate
+	randX = randInt(-120, 120);  
+	int y = ((int)sqrt(120.0 * 120.0 - randX * randX));   
 	randY = randInt(0 - y, y);
 	
-	randX += VIEW_WIDTH / 2;          //center
+	randX += VIEW_WIDTH / 2;          
 	randY += VIEW_HEIGHT / 2;  
 }
                                                
@@ -214,14 +214,14 @@ void StudentWorld::getOpenLocation(const int& numToCheck, double& randX, double&
 	int i = 0;                   
 	while (b)
 	{
-		getRandomLocation(randX, randY);   //get random coordinates
-		for (; i < numToCheck && it != m_actors.end(); i++)   //check specified actors locations
+		getRandomLocation(randX, randY);   
+		for (; i < numToCheck && it != m_actors.end(); i++)  
 		{
-			if (checkOverlap((*it), randX, randY))   //if overlaps, break and get new coordinates 
+			if (checkOverlap((*it), randX, randY))   
 				break;
 			it++;
 		}
-		if (i == numToCheck)   //doesn't overlap with any specified actor locations
+		if (i == numToCheck)  
 			b = false;
 	}
 }
@@ -231,7 +231,7 @@ void StudentWorld::insertInCircle(const int& numToInsert, const char& ch)
 {
 	int currentInserted = 0;
 	int numToCheck = m_numActors;
-	while (currentInserted < numToInsert)  //insert a total of numToInsert
+	while (currentInserted < numToInsert)  
 	{
 		double randX;
 		double randY;
@@ -241,12 +241,12 @@ void StudentWorld::insertInCircle(const int& numToInsert, const char& ch)
 		{
 			if (ch == 'p')
 				m_actors.push_back(new Pit(randX, randY, this));
-			else if (ch == 'f')
-				m_actors.push_back(new Food(randX, randY, this)); //insert food 
-			numToCheck++;  //check for just inserted Actor next iteration
+			else if (ch == 'f') //food
+				m_actors.push_back(new Food(randX, randY, this)); 
+			numToCheck++;  
 		}
 		else if (ch == 'd') //dirt
-			m_actors.push_back(new Dirt(randX, randY, this)); //insert dirt 
+			m_actors.push_back(new Dirt(randX, randY, this)); 
 		
 		currentInserted++;  
 	}
@@ -382,7 +382,7 @@ bool StudentWorld::checkOverlap(Actor* s, const double& x2, const double& y2, co
 	double x1 = s->getX();
 	double y1 = s->getY();
 
-	if (sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)) <= overlap)    //distance formula, they overlap if <= 8 pixels apart
+	if (sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)) <= overlap)    //overlap if <= 8 pixels apart
 		return true;
 	return false;
 }

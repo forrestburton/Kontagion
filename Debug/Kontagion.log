@@ -1,4 +1,7 @@
 ﻿  Actor.cpp
+  GameController.cpp
+  GameWorld.cpp
   StudentWorld.cpp
+  main.cpp
   Generating Code...
   Kontagion.vcxproj -> C:\CS32\Kontagion\Debug\Kontagion.exe
